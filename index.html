@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro Allenamenti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght=500;600;700&family=Inter:wght=400;500;600&family=Space+Mono:wght=400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -531,11 +531,12 @@
 <script>
     (function(){
       // --- CONFIGURAZIONE SUPABASE ---
+      // IMPORTANTE: Sostituisci questi valori solo se hai un DB Supabase attivo, altrimenti l'app funzionerà comunque in locale.
       const SUPABASE_URL = "https://jyejxdxwrlifdgdoxnkx.supabase.co";
       const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZWp4ZHh3cmxpZmRnZG94bmt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzMwNjEsImV4cCI6MjA5OTUwOTA2MX0.OfR-joJS_eq0nJnarlR22yapu0foPRRTSp2mrnyzcl8";
       
       let supabase = null;
-      if(!SUPABASE_URL.includes("XYZ_IL_TUO_ID")) {
+      if(window.supabase && !SUPABASE_URL.includes("XYZ_IL_TUO_ID")) {
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       }
     
@@ -566,7 +567,7 @@
         return 1;
       }
     
-      /* ---------- AZIONE CAMBIO TAB (CORRETTO) ---------- */
+      /* ---------- GESTIONE INTERATTIVITÀ DELLE TAB (CORRETTO) ---------- */
       $$('.tab').forEach(tabButton => {
         tabButton.addEventListener('click', () => {
           $$('.tab').forEach(t => t.classList.remove('active'));
