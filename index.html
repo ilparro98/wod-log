@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro Allenamenti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg: #141816;
+    --board: #1D2320;
+    --board-alt: #232A26;
+    --line: rgba(242,240,233,0.13);
+    --chalk: #F2F0E9;
+    --chalk-dim: #98A199;
+    --orange: #FF7A45;
+    --orange-dim: rgba(255,122,69,0.15);
+    --teal: #2FC7A3;
+    --teal-dim: rgba(47,199,163,0.15);
+    --yellow: #F2C14E;
+    --red: #E1615C;
+    --radius: 12px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--bg);
+    color: var(--chalk);
+    font-family: 'Inter', sans-serif;
+    min-height:100vh;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.02), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,255,255,0.02), transparent 40%);
+  }
+  .app{ max-width: 880px; margin: 0 auto; padding: 28px 18px 60px; }
+
+  /* Header */
+  .topbar{ margin-bottom: 22px; }
+  .topbar h1{
+    font-family:'Oswald', sans-serif;
+    font-size: 30px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: 700;
+  }
+  .topbar .subtitle{
+    margin: 4px 0 0;
+    color: var(--chalk-dim);
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .topbar .subtitle span.o{ color: var(--orange); }
+  .topbar .subtitle span.t{ color: var(--teal); }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    gap: 4px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab{
+    background:none;
+    border:none;
+    color: var(--chalk-dim);
+    font-family:'Oswald', sans-serif;
+    font-size: 14px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 10px 16px 12px;
+    cursor:pointer;
+    border-bottom: 3px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .tab:hover{ color: var(--chalk); }
+  .tab.active{ color: var(--chalk); }
+  .tab[data-tab="corsa"].active{ border-color: var(--orange); }
+  .tab[data-tab="crossfit"].active{ border-color: var(--teal); }
+  .tab[data-tab="stats"].active{ border-color: var(--yellow); }
+
+  .tab-panel{ display:none; animation: fadeIn .25s ease; }
+  .tab-panel.active{ display:block; }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(4px);} to{opacity:1; transform:none;} }
+
+  /* Board / card */
+  .board{
+    background: var(--board);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .board h2{
+    font-family:'Oswald', sans-serif;
+    font-size: 17px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 0 0 16px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+  .dot.orange{ background: var(--orange); }
+  .dot.teal{ background: var(--teal); }
+  .dot.yellow{ background: var(--yellow); }
+
+  /* Forms */
+  .form-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  label{
+    display:block;
+    font-size: 11px;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--chalk-dim);
+    margin-bottom: 6px;
+  }
+  input, select, textarea{
+    width: 100%;
+    background: var(--board-alt);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--chalk);
+    padding: 9px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+  textarea{ resize: vertical; min-height: 54px; }
+  .mono-input{ font-family:'Space Mono', monospace; }
+
+  button.primary{
+    font-family:'Oswald', sans-serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 13px;
+    border:none;
+    border-radius: 7px;
+    padding: 11px 18px;
+    cursor:pointer;
+    color: #12140F;
+    font-weight: 600;
+  }
+  .btn-orange{ background: var(--orange); }
+  .btn-teal{ background: var(--teal); }
+
+  button.ghost{
+    background: none;
+    border: 1px dashed var(--line);
+    color: var(--chalk-dim);
+    border-radius: 7px;
+    padding: 7px 12px;
+    font-size: 12px;
+    cursor:pointer;
+  }
+  button.icon-btn{
+    background:none;
+    border:none;
+    color: var(--red);
+    cursor:pointer;
+    font-size: 16px;
+    padding: 2px 6px;
+  }
+
+  /* Exercise rows */
+  .exercise-row{
+    display:grid;
+    grid-template-columns: 1.4fr .7fr 1fr 1.3fr auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items:end;
+  }
+  @media (max-width: 640px){
+    .exercise-row{ grid-template-columns: 1fr 1fr; }
+  }
+
+  .result-fields{
+    background: rgba(0,0,0,0.18);
+    border-radius: 8px;
+    padding: 14px;
+    margin: 10px 0 16px;
+  }
+
+  /* Entry list */
+  .entry-list{ display:flex; flex-direction:column; gap:10px; }
+  .entry{
+    background: var(--board-alt);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 13px 14px;
+  }
+  .entry-top{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .entry-date{
+    font-family:'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--chalk-dim);
+  }
+  .entry-stats{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 8px;
+    font-family:'Space Mono', monospace;
+    font-size: 13px;
+  }
+  .entry-stats .stat-label{
+    color: var(--chalk-dim);
+    font-family:'Inter', sans-serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    display:block;
+  }
+  .badge{
+    font-family:'Oswald', sans-serif;
+    font-size: 10px;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .badge.fortime{ background: var(--orange-dim); color: var(--orange); }
+  .badge.amrap{ background: var(--teal-dim); color: var(--teal); }
+  .badge.emom{ background: rgba(242,193,78,0.15); color: var(--yellow); }
+
+  .wod-desc{ margin: 8px 0; font-size: 14px; }
+  .exercise-list{ list-style:none; padding:0; margin: 8px 0; display:flex; flex-direction:column; gap:5px; }
+  .exercise-list li{ font-size: 13px; display:flex; gap: 8px; }
+  .ex-name{ font-weight: 600; }
+  .ex-weight{ color: var(--yellow); font-family:'Space Mono', monospace; }
+
+  .led{
+    display:inline-block;
+    background: #0B0D0B;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-family:'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--teal);
+    text-shadow: 0 0 8px rgba(47,199,163,0.5);
+    margin-top: 8px;
+  }
+  .notes{ margin-top: 8px; font-size: 12px; color: var(--chalk-dim); }
+  .empty-state{ text-align:center; padding: 30px 10px; color: var(--chalk-dim); font-size: 13px; }
+
+  /* Stats Table */
+  .stat-cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat-card{ background: var(--board-alt); border: 1px solid var(--line); border-radius: 9px; padding: 12px; text-align:center; }
+  .stat-card .big{ font-family:'Space Mono', monospace; font-size: 21px; display:block; }
+  .stat-card .lbl{ font-size: 10px; text-transform: uppercase; color: var(--chalk-dim); margin-top: 3px; display:block; }
+  .row-inline{ display:flex; gap: 12px; align-items:flex-end; margin-bottom: 14px; }
+  .row-inline .field { flex: 1; }
+
+  /* Table Style for Movement PRs */
+  .pr-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  .pr-table th, .pr-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .pr-table th {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    color: var(--chalk-dim);
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+  .pr-table td.weight-cell {
+    font-family: 'Space Mono', monospace;
+    color: var(--chalk);
+  }
+  .pr-table td.rm-cell {
+    font-family: 'Space Mono', monospace;
+    color: var(--yellow);
+    font-weight: 600;
+  }
+  .pr-table td.date-cell {
+    font-family: 'Space Mono', monospace;
+    color: var(--chalk-dim);
+    font-size: 12px;
+  }
+  .pr-table tr:hover {
+    background: rgba(255,255,255,0.02);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="topbar">
+    <h1>Registro Allenamenti</h1>
+    <p class="subtitle"><span class="o">Corsa</span> &nbsp;&middot;&nbsp; <span class="t">Crossfit</span></p>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="corsa">Corsa</button>
+    <button class="tab" data-tab="crossfit">Crossfit</button>
+    <button class="tab" data-tab="stats">Statistiche</button>
+  </nav>
+
+  <main>
+    <section id="tab-corsa" class="tab-panel active">
+      <div class="board">
+        <h2><span class="dot orange"></span>Nuovo allenamento</h2>
+        <form id="runForm">
+          <div class="form-grid">
+            <div>
+              <label for="runDate">Data</label>
+              <input type="date" id="runDate" required>
+            </div>
+            <div>
+              <label for="runKm">Km effettuati</label>
+              <input type="number" id="runKm" step="0.01" min="0" placeholder="10.5" required>
+            </div>
+            <div>
+              <label for="runPace">Passo medio (min/km)</label>
+              <input type="text" id="runPace" class="mono-input" placeholder="5:30" pattern="^\d{1,2}:\d{2}$" title="Formato mm:ss (es. 5:30)">
+            </div>
+            <div>
+              <label for="runHr">Battiti medi (bpm)</label>
+              <input type="number" id="runHr" min="0" placeholder="150">
+            </div>
+            <div>
+              <label for="runCal">Calorie</label>
+              <input type="number" id="runCal" min="0" placeholder="620">
+            </div>
+          </div>
+          
+          <div style="margin-bottom: 16px;">
+            <label>Tempo totale calcolato</label>
+            <div id="calculatedTimeLed" class="led" style="color: var(--orange); text-shadow: 0 0 8px rgba(255,122,69,0.5);">--:--</div>
+          </div>
+
+          <button type="submit" class="primary btn-orange">Salva allenamento</button>
+        </form>
+      </div>
+
+      <div class="board">
+        <h2><span class="dot orange"></span>Storico corse</h2>
+        <div id="runList" class="entry-list"></div>
+      </div>
+    </section>
+
+    <section id="tab-crossfit" class="tab-panel">
+      <div class="board">
+        <h2><span class="dot teal"></span>Nuovo WOD</h2>
+        <form id="wodForm">
+          <div class="form-grid">
+            <div>
+              <label for="wodDate">Data</label>
+              <input type="date" id="wodDate" required>
+            </div>
+            <div>
+              <label for="wodType">Tipo WOD</label>
+              <select id="wodType">
+                <option value="fortime">For Time</option>
+                <option value="amrap">AMRAP</option>
+                <option value="emom">EMOM</option>
+              </select>
+            </div>
+          </div>
+          <label for="wodDesc">Descrizione WOD</label>
+          <textarea id="wodDesc" placeholder="es. 21-15-9 Thrusters + Pull-ups"></textarea>
+
+          <div style="margin-top:16px;">
+            <label style="margin-bottom:10px;">Esercizi</label>
+            <div id="exerciseRows"></div>
+            <button type="button" id="addExerciseBtn" class="ghost">+ Aggiungi esercizio</button>
+          </div>
+
+          <div class="result-fields" id="resultFields"></div>
+
+          <label for="wodNotes">Note generali</label>
+          <textarea id="wodNotes" placeholder="Come ti sei sentito, sensazioni, ecc."></textarea>
+
+          <button type="submit" class="primary btn-teal" style="margin-top:14px;">Salva WOD</button>
+        </form>
+      </div>
+
+      <div class="board">
+        <h2><span class="dot teal"></span>Storico WOD</h2>
+        <div id="wodList" class="entry-list"></div>
+      </div>
+    </section>
+
+    <section id="tab-stats" class="tab-panel">
+      <div class="board">
+        <h2><span class="dot orange"></span>Corsa</h2>
+        <div id="runStats"></div>
+      </div>
+
+      <div class="board">
+        <h2><span class="dot yellow"></span>Movimento &mdash; Massimali & Stima 1-RM</h2>
+        <div id="movementList"></div>
+      </div>
+
+      <div class="board">
+        <h2><span class="dot teal"></span>Crossfit &mdash; Analisi Singolo Peso</h2>
+        <div class="row-inline">
+          <div class="field">
+            <label for="exerciseSelect">Scegli esercizio per grafico progressione</label>
+            <select id="exerciseSelect"></select>
+          </div>
+        </div>
+        <div id="wodStats"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<datalist id="exerciseNames"></datalist>
+
+<script>
+(function(){
+  // --- CONFIGURAZIONE SUPABASE ---
+  const SUPABASE_URL = "https://jyejxdxwrlifdgdoxnkx.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZWp4ZHh3cmxpZmRnZG94bmt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzMwNjEsImV4cCI6MjA5OTUwOTA2MX0.OfR-joJS_eq0nJnarlR22yapu0foPRRTSp2mrnyzcl8";
+  
+  let supabaseClient = null;
+  if (typeof supabase !== 'undefined' && !SUPABASE_URL.includes("XYZ_IL_TUO_ID")) {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
+
+  let state = { runs: [], wods: [] };
+
+  const $ = (sel, ctx) => (ctx||document).querySelector(sel);
+  const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
+
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function fmtDate(iso){
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  // Formula di Epley per calcolare l'1RM teorico: Peso * (1 + (Reps / 30))
+  function calculateOneRM(weight, reps) {
+    if (!weight) return 0;
+    if (!reps || isNaN(reps) || reps <= 1) return weight;
+    return weight * (1 + (reps / 30));
+  }
+
+  // Estrae in modo intelligente il numero di reps da una stringa (es: "21-15-9" -> prende l'ultimo o analizza se è un numero singolo "2", "3 reps" ecc)
+  function parseReps(repsStr) {
+    if (!repsStr) return 1;
+    const cleanStr = repsStr.trim().toLowerCase();
+    const match = cleanStr.match(/^([0-9]+)/); // Estrae il primo gruppo numerico consecutivo
+    if (match) {
+      return parseInt(match[1]) || 1;
+    }
+    return 1;
+  }
+
+  /* ---------- AZIONE TAB ---------- */
+  $$('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $$('.tab').forEach(t => t.classList.remove('active'));
+      $$('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const targetPanel = $('#tab-' + tab.dataset.tab);
+      if(targetPanel) targetPanel.classList.add('active');
+      if(tab.dataset.tab === 'stats'){ renderStats(); }
+    });
+  });
+
+  async function loadState(){
+    if (!supabaseClient) {
+      console.warn("Utilizzo dati locali temporanei: configura URL e Chiave Anonima di Supabase nello script.");
+      return;
+    }
+    try{
+      const { data: runsData, error: runsError } = await supabaseClient.from('runs').select('*').order('date', { ascending: false });
+      const { data: wodsData, error: wodsError } = await supabaseClient.from('wods').select('*').order('date', { ascending: false });
+      if (runsError) throw runsError;
+      if (wodsError) throw wodsError;
+      state.runs = runsData || [];
+      state.wods = wodsData || [];
+    }catch(e){
+      console.error('Errore Supabase:', e);
+    }
+  }
+
+  /* ---------- LOGICA CORSA ---------- */
+  const runForm = $('#runForm');
+  if($('#runDate')) $('#runDate').value = todayStr();
+
+  function paceToSeconds(pace){
+    if(!pace) return null;
+    const m = pace.match(/^(\d{1,2}):(\d{2})$/);
+    if(!m) return null;
+    return parseInt(m[1]) * 60 + parseInt(m[2]);
+  }
+  
+  function secondsToFormattedTime(totalSec){
+    if (!totalSec || isNaN(totalSec)) return "--:--";
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = Math.round(totalSec % 60);
+    const minStr = mins.toString().padStart(2, '0');
+    const secStr = secs.toString().padStart(2, '0');
+    if (hrs > 0) return `${hrs}:${minStr}:${secStr}`;
+    return `${mins}:${secStr}`;
+  }
+
+  function updateCalculatedTime() {
+    const km = parseFloat($('#runKm')?.value);
+    const paceStr = $('#runPace')?.value.trim();
+    const led = $('#calculatedTimeLed');
+    if (!km || !paceStr) { if(led) led.textContent = "--:--"; return; }
+    const secPerKm = paceToSeconds(paceStr);
+    if (secPerKm) {
+      if(led) led.textContent = secondsToFormattedTime(secPerKm * km);
+    } else {
+      if(led) led.textContent = "--:--";
+    }
+  }
+
+  if($('#runKm')) $('#runKm').addEventListener('input', updateCalculatedTime);
+  if($('#runPace')) $('#runPace').addEventListener('input', updateCalculatedTime);
+
+  if(runForm) {
+    runForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const entry = {
+        id: uid(),
+        date: $('#runDate').value,
+        km: parseFloat($('#runKm').value),
+        pace: $('#runPace').value.trim(),
+        hr: $('#runHr').value ? parseInt($('#runHr').value) : null,
+        cal: $('#runCal').value ? parseInt($('#runCal').value) : null
+      };
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('runs').insert([entry]);
+          if (error) throw error;
+        } catch(err) { console.error(err); }
+      }
+      state.runs.push(entry);
+      renderRuns();
+      runForm.reset();
+      if($('#runDate')) $('#runDate').value = todayStr();
+      if($('#calculatedTimeLed')) $('#calculatedTimeLed').textContent = "--:--";
+    });
+  }
+
+  function renderRuns(){
+    const list = $('#runList');
+    if(!list) return;
+    const sorted = [...state.runs].sort((a,b) => b.date.localeCompare(a.date));
+    if(sorted.length === 0){
+      list.innerHTML = '<div class="empty-state">Nessuna corsa registrata.</div>';
+      return;
+    }
+    list.innerHTML = sorted.map(r => {
+      const sec = paceToSeconds(r.pace);
+      return `
+        <div class="entry">
+          <div class="entry-top">
+            <span class="entry-date">${fmtDate(r.date)}</span>
+            <button class="icon-btn" data-delete-run="${r.id}">&times;</button>
+          </div>
+          <div class="entry-stats">
+            <div><span class="stat-label">Km</span>${r.km ?? '&mdash;'}</div>
+            <div><span class="stat-label">Passo</span>${r.pace || '&mdash;'}</div>
+            <div><span class="stat-label">Tempo Totale</span><span style="color:var(--orange)">${sec ? secondsToFormattedTime(sec * r.km) : '&mdash;'}</span></div>
+            <div><span class="stat-label">Battiti</span>${r.hr ?? '&mdash;'}</div>
+            <div><span class="stat-label">Calorie</span>${r.cal ?? '&mdash;'}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    $$('[data-delete-run]', list).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.deleteRun;
+        if (supabaseClient) await supabaseClient.from('runs').delete().eq('id', id);
+        state.runs = state.runs.filter(r => r.id !== id);
+        renderRuns();
+      });
+    });
+  }
+
+  /* ---------- LOGICA CROSSFIT ---------- */
+  const wodForm = $('#wodForm');
+  if($('#wodDate')) $('#wodDate').value = todayStr();
+  const exerciseRows = $('#exerciseRows');
+  const resultFields = $('#resultFields');
+  const wodTypeSelect = $('#wodType');
+
+  function exerciseRowTemplate(){
+    const div = document.createElement('div');
+    div.className = 'exercise-row';
+    div.innerHTML = `
+      <div><label>Esercizio (cerca/scrivi)</label><input type="text" class="ex-name-input" list="exerciseNames" placeholder="es. Squat"></div>
+      <div><label>Peso (kg)</label><input type="number" class="ex-weight-input" step="0.5" min="0" placeholder="50"></div>
+      <div><label>Reps (es: 2 o 5)</label><input type="text" class="ex-reps-input" placeholder="2"></div>
+      <div><label>Note</label><input type="text" class="ex-scaling-input" placeholder="Scalato"></div>
+      <button type="button" class="icon-btn" data-remove-row>&times;</button>
+    `;
+    div.querySelector('[data-remove-row]').addEventListener('click', () => {
+      if(exerciseRows.children.length > 1) div.remove();
+      else div.querySelectorAll('input').forEach(i => i.value = '');
+    });
+    return div;
+  }
+
+  if($('#addExerciseBtn')) {
+    $('#addExerciseBtn').addEventListener('click', () => { exerciseRows.appendChild(exerciseRowTemplate()); });
+  }
+
+  function renderResultFields(){
+    if(!resultFields || !wodTypeSelect) return;
+    const type = wodTypeSelect.value;
+    if(type === 'fortime'){
+      resultFields.innerHTML = `<label>Tempo (mm:ss)</label><input type="text" id="resTime" class="mono-input" placeholder="12:45">`;
+    } else if(type === 'amrap') {
+      resultFields.innerHTML = `
+        <div class="form-grid">
+          <div><label>Round</label><input type="number" id="resRounds" placeholder="7"></div>
+          <div><label>Reps Extra</label><input type="number" id="resExtraReps" placeholder="5"></div>
+        </div>`;
+    } else if(type === 'emom') {
+      resultFields.innerHTML = `
+        <div class="form-grid">
+          <div><label>Durata Totale (min)</label><input type="number" id="resDuration" placeholder="20"></div>
+          <div><label>Ogni quanti minuti (es. 1 o 2)</label><input type="number" id="resEmomInterval" step="1" min="1" value="1"></div>
+          <div><label>Round Completati</label><input type="number" id="resEmomRounds" placeholder="20"></div>
+        </div>`;
+    }
+  }
+  if(wodTypeSelect) wodTypeSelect.addEventListener('change', renderResultFields);
+
+  if(wodForm) {
+    wodForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const exercises = $$('.exercise-row', exerciseRows).map(row => ({
+        name: row.querySelector('.ex-name-input').value.trim(),
+        weight: row.querySelector('.ex-weight-input').value ? parseFloat(row.querySelector('.ex-weight-input').value) : null,
+        reps: row.querySelector('.ex-reps-input').value.trim(),
+        scaling: row.querySelector('.ex-scaling-input').value.trim()
+      })).filter(ex => ex.name);
+
+      let result = { type: wodTypeSelect.value };
+      if(wodTypeSelect.value === 'fortime') {
+        result.time = $('#resTime') ? $('#resTime').value.trim() : '';
+      } else if(wodTypeSelect.value === 'amrap') {
+        result.rounds = $('#resRounds')?.value ? parseInt($('#resRounds').value) : 0;
+        result.extraReps = $('#resExtraReps')?.value ? parseInt($('#resExtraReps').value) : 0;
+      } else if(wodTypeSelect.value === 'emom') {
+        result.duration = $('#resDuration')?.value ? parseInt($('#resDuration').value) : 0;
+        result.interval = $('#resEmomInterval')?.value ? parseInt($('#resEmomInterval').value) : 1;
+        result.roundsCompleted = $('#resEmomRounds')?.value ? parseInt($('#resEmomRounds').value) : 0;
+      }
+
+      const entry = {
+        id: uid(),
+        date: $('#wodDate').value,
+        type: wodTypeSelect.value,
+        description: $('#wodDesc').value.trim(),
+        exercises,
+        result,
+        notes: $('#wodNotes').value.trim()
+      };
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('wods').insert([entry]);
+          if (error) throw error;
+        } catch(err) { console.error(err); }
+      }
+      state.wods.push(entry);
+      renderWods();
+      updateExerciseDatalist();
+      wodForm.reset();
+      if($('#wodDate')) $('#wodDate').value = todayStr();
+      if(exerciseRows) { exerciseRows.innerHTML = ''; exerciseRows.appendChild(exerciseRowTemplate()); }
+      renderResultFields();
+    });
+  }
+
+  function renderWods(){
+    const list = $('#wodList');
+    if(!list) return;
+    if(state.wods.length === 0){
+      list.innerHTML = '<div class="empty-state">Nessun WOD registrato.</div>';
+      return;
+    }
+    list.innerHTML = [...state.wods].sort((a,b) => b.date.localeCompare(a.date)).map(w => {
+      let resultText = '';
+      if(w.result?.type === 'fortime') resultText = w.result.time || '--:--';
+      else if(w.result?.type === 'amrap') resultText = `${w.result.rounds || 0} Rds + ${w.result.extraReps || 0} Reps`;
+      else if(w.result?.type === 'emom') {
+        const intervalText = w.result.interval && w.result.interval > 1 ? `E${w.result.interval}MOM` : 'EMOM';
+        resultText = `${intervalText} (${w.result.duration || 0} min): ${w.result.roundsCompleted || 0}/${w.result.duration || 0} Rds`;
+      }
+
+      return `
+        <div class="entry">
+          <div class="entry-top">
+            <span class="entry-date">${fmtDate(w.date)} <span class="badge ${w.type}">${w.type}</span></span>
+            <button class="icon-btn" data-delete-wod="${w.id}">&times;</button>
+          </div>
+          ${w.description ? `<div class="wod-desc">${w.description}</div>` : ''}
+          <ul class="exercise-list">
+            ${(w.exercises || []).map(ex => {
+              const rCount = parseReps(ex.reps);
+              const oneRMText = (ex.weight && rCount > 1) ? ` <span style="color:var(--chalk-dim); font-size:11px;">(1-RM stimato: ${calculateOneRM(ex.weight, rCount).toFixed(1)} kg)</span>` : '';
+              return `<li><span class="ex-name">${ex.name}</span> ${ex.weight ? `<span class="ex-weight">${ex.weight} kg</span>` : ''} ${ex.reps ? `(${ex.reps} reps)` : ''}${oneRMText}</li>`
+            }).join('')}
+          </ul>
+          <div class="led">${resultText}</div>
+          ${w.notes ? `<div class="notes">${w.notes}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    $$('[data-delete-wod]', list).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.deleteWod;
+        if (supabaseClient) await supabaseClient.from('wods').delete().eq('id', id);
+        state.wods = state.wods.filter(w => w.id !== id);
+        renderWods();
+        updateExerciseDatalist();
+      });
+    });
+  }
+
+  function updateExerciseDatalist(){
+    const select = $('#exerciseSelect');
+    const datalist = $('#exerciseNames');
+    const names = new Set();
+    state.wods.forEach(w => (w.exercises||[]).forEach(ex => { if(ex.name) names.add(ex.name.trim()); }));
+    const sortedNames = Array.from(names).sort();
+    if(datalist) datalist.innerHTML = sortedNames.map(n => `<option value="${n}">`).join('');
+    if(select) {
+      const currentSelection = select.value;
+      select.innerHTML = sortedNames.map(n => `<option value="${n}">${n}</option>`).join('');
+      if(names.has(currentSelection)) select.value = currentSelection;
+    }
+  }
+
+  if($('#exerciseSelect')) $('#exerciseSelect').addEventListener('change', renderWodStats);
+
+  /* ---------- RENDERING STATISTICHE ---------- */
+  function renderRunStats(){
+    const container = $('#runStats');
+    if(!container) return;
+    const totalKm = state.runs.reduce((sum, r) => sum + (r.km || 0), 0);
+    container.innerHTML = `
+      <div class="stat-cards">
+        <div class="stat-card"><span class="big">${totalKm.toFixed(1)}</span><span class="lbl">Km Totali</span></div>
+        <div class="stat-card"><span class="big">${state.runs.length}</span><span class="lbl">Sessioni</span></div>
+      </div>`;
+  }
+
+  // Creazione della Tabella dei PR Reali e degli 1-RM Stimati Teorici
+  function renderMovementList(){
+    const container = $('#movementList');
+    if(!container) return;
+
+    const prMap = new Map(); // key -> { name, maxWeight, reps, maxOneRM, date }
+
+    state.wods.forEach(w => {
+      (w.exercises || []).forEach(ex => {
+        if(ex.name && ex.weight !== null && ex.weight !== undefined) {
+          const key = ex.name.trim().toLowerCase();
+          const rCount = parseReps(ex.reps);
+          const computedOneRM = calculateOneRM(ex.weight, rCount);
+
+          const current = prMap.get(key);
+          // Aggiorna se l'1RM stimato totale o il peso specifico è superiore a quanto salvato
+          if(!current || computedOneRM > current.maxOneRM) {
+            prMap.set(key, {
+              name: ex.name.trim(),
+              maxWeight: ex.weight,
+              reps: ex.reps || "1",
+              maxOneRM: computedOneRM,
+              date: w.date
+            });
+          }
+        }
+      });
+    });
+
+    const prList = Array.from(prMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+    if(prList.length === 0) {
+      container.innerHTML = '<div class="empty-state">Nessun massimale registrato negli esercizi dei WOD.</div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="pr-table">
+        <thead>
+          <tr>
+            <th>Esercizio</th>
+            <th>Miglior RM Reale</th>
+            <th>Stima Massimale (1-RM)</th>
+            <th>Data Record</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${prList.map(item => `
+            <tr>
+              <td><strong>${item.name}</strong></td>
+              <td class="weight-cell">${item.maxWeight} kg <span style="font-size:12px; color:var(--chalk-dim)">@ ${item.reps} RM</span></td>
+              <td class="rm-cell">${item.maxOneRM.toFixed(1)} kg</td>
+              <td class="date-cell">${fmtDate(item.date)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderWodStats(){
+    const container = $('#wodStats');
+    if(!container) return;
+    const select = $('#exerciseSelect');
+    const exerciseName = select ? select.value : '';
+
+    if(!exerciseName){
+      container.innerHTML = `<div class="empty-state">Seleziona o digita un esercizio per analizzare la progressione dei massimali.</div>`;
+      return;
+    }
+
+    const points = [];
+    state.wods.forEach(w => {
+      (w.exercises || []).forEach(ex => {
+        if(ex.name && ex.name.trim().toLowerCase() === exerciseName.trim().toLowerCase() && ex.weight){
+          const rCount = parseReps(ex.reps);
+          points.push({ x: w.date, y: calculateOneRM(ex.weight, rCount), realW: ex.weight, realR: ex.reps || "1" });
+        }
+      });
+    });
+    points.sort((a,b) => a.x.localeCompare(b.x));
+
+    if(points.length === 0){
+      container.innerHTML = '<div class="empty-state">Nessun peso registrato nei WOD storici per questo specifico esercizio.</div>';
+      return;
+    }
+
+    const maxOneRM = Math.max(...points.map(p => p.y));
+    container.innerHTML = `
+      <div class="stat-cards" style="margin-top: 10px;">
+        <div class="stat-card"><span class="big">${maxOneRM.toFixed(1)} kg</span><span class="lbl">Miglior 1-RM Stimato</span></div>
+        <div class="stat-card"><span class="big">${points.length}</span><span class="lbl">Sessioni totali</span></div>
+      </div>`;
+  }
+
+  function renderStats(){ 
+    renderRunStats(); 
+    renderMovementList(); 
+    renderWodStats(); 
+  }
+
+  /* ---------- INIZIALIZZAZIONE ---------- */
+  async function init(){
+    if(exerciseRows) exerciseRows.appendChild(exerciseRowTemplate());
+    renderResultFields();
+    await loadState();
+    renderRuns();
+    renderWods();
+    updateExerciseDatalist();
+  }
+  init();
+})();
+</script>
+</body>
+</html>
