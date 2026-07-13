@@ -420,7 +420,7 @@
 
     <section id="tab-crossfit" class="tab-panel">
       <div class="board">
-        <h2 id="wodFormTitle"><span class="dot teal"></span>Inserisci Allenamento CrossFit</h2>
+        <h2 id="wodFormTitle"><span class="dot teal"></span>Inserisci Allenamento CrossFit (Multi-WOD)</h2>
         <form id="wodForm">
           <input type="hidden" id="wodEditingId" value="">
 
@@ -431,7 +431,7 @@
 
           <div id="wodBlocksContainer"></div>
           
-          <button type="button" id="addWodBlockBtn" class="ghost" style="margin-bottom: 20px; display: block; width: 100%;">+ Aggiungi un altro WOD a questo giorno</button>
+          <button type="button" id="addWodBlockBtn" class="ghost" style="margin-bottom: 20px; display: block; width: 100%;">+ Aggiungi un altro WOD a questo giorno (es. Skill / Metcon)</button>
 
           <div>
             <label for="wodNotes">Note della Giornata (Opzionale)</label>
@@ -620,11 +620,18 @@
             hr: $('#runHr').value ? parseInt($('#runHr').value) : null,
             cal: $('#runCal').value ? parseInt($('#runCal').value) : null
           };
-          if(supabase) await supabase.from('runs').insert([entry]);
-          state.runs.push(entry);
-          renderRuns();
-          runForm.reset();
-          $('#runDate').value = todayStr();
+          try {
+            if(supabase) {
+              const { error } = await supabase.from('runs').insert([entry]);
+              if(error) throw error;
+            }
+            state.runs.push(entry);
+            renderRuns();
+            runForm.reset();
+            $('#runDate').value = todayStr();
+          } catch(err) {
+            alert("Errore salvataggio corsa su Supabase:\n" + err.message);
+          }
         });
       }
     
@@ -659,203 +666,192 @@
         });
       }
     
-      /* ---------- CROSSFIT (AGGIORNATO CON EDIT MODE) ---------- */
+      /* ---------- CROSSFIT (MULTI-WOD DENTRO COLONNA EXERCISES JSONB) ---------- */
       const wodForm = $('#wodForm');
-      if($('#wodDate')) $('#wodDate').value = todayStr();
       const wodBlocksContainer = $('#wodBlocksContainer');
+      if($('#wodDate')) $('#wodDate').value = todayStr();
 
       function exerciseRowTemplateWod(blockId, initialName='', initialNote='') {
         const div = document.createElement('div');
         div.className = 'exercise-row';
         div.innerHTML = `
           <div><input type="text" class="ex-name" placeholder="Esercizio (es. Pull up)" value="${initialName}"></div>
-          <div><input type="text" class="ex-note" placeholder="Dettagli / Note / Pesi" value="${initialNote}"></div>
+          <div><input type="text" class="ex-note" placeholder="Note / Carico" value="${initialNote}"></div>
           <button type="button" class="icon-btn" data-remove-ex>&times;</button>
         `;
-        div.querySelector('[data-remove-ex]').addEventListener('click', () => {
-          const block = $(`[data-block-id="${blockId}"]`);
-          const rowsContainer = $('.ex-rows-container', block);
-          if(rowsContainer.children.length > 1) div.remove();
-          else div.querySelectorAll('input').forEach(i => i.value = '');
-        });
+        div.querySelector('[data-remove-ex]').addEventListener('click', () => { div.remove(); });
         return div;
       }
 
-      function wodBlockTemplate(initialType='fortime', initialDesc='', initialExercises=[]) {
+      function wodBlockTemplate(initialType='fortime', initialDesc='', initialMovements=[]) {
         const blockId = uid();
         const div = document.createElement('div');
         div.className = 'wod-block';
         div.setAttribute('data-block-id', blockId);
         div.innerHTML = `
           <div class="wod-block-header">
-            <div style="flex:1;">
-              <select class="wod-type-select" style="max-width:150px;">
-                <option value="fortime" ${initialType === 'fortime' ? 'selected' : ''}>For Time</option>
-                <option value="amrap" ${initialType === 'amrap' ? 'selected' : ''}>AMRAP</option>
-                <option value="emom" ${initialType === 'emom' ? 'selected' : ''}>EMOM</option>
-                <option value="chipper" ${initialType === 'chipper' ? 'selected' : ''}>Chipper / Altro</option>
-              </select>
-            </div>
-            <button type="button" class="icon-btn remove-block-btn" style="font-size:18px;">&times; Elimina WOD</button>
+            <select class="wod-type-select" style="max-width:150px;">
+              <option value="fortime" ${initialType === 'fortime' ? 'selected' : ''}>For Time</option>
+              <option value="amrap" ${initialType === 'amrap' ? 'selected' : ''}>AMRAP</option>
+              <option value="emom" ${initialType === 'emom' ? 'selected' : ''}>EMOM</option>
+              <option value="chipper" ${initialType === 'chipper' ? 'selected' : ''}>Chipper / Altro</option>
+            </select>
+            <button type="button" class="icon-btn remove-block-btn">&times; Rimuovi WOD</button>
           </div>
           <div style="margin-bottom:10px;">
-            <label>Descrizione / Struttura Libera del WOD</label>
-            <textarea class="wod-desc-textarea" placeholder="Inserisci lo schema del WOD o i risultati...">${initialDesc}</textarea>
+            <label>Struttura del WOD / Note specifiche</label>
+            <textarea class="wod-desc-textarea" placeholder="es. 21-15-9... o i tuoi punteggi">${initialDesc}</textarea>
           </div>
           <div>
-            <label style="color:var(--teal);">Esercizi Coinvolti (Opzionale)</label>
             <div class="ex-rows-container"></div>
-            <button type="button" class="ghost add-ex-row-btn" style="margin-top:5px; font-size:11px;">+ Esercizio</button>
+            <button type="button" class="ghost add-ex-row-btn" style="margin-top:5px;">+ Aggiungi Movimento</button>
           </div>
         `;
         const exRows = div.querySelector('.ex-rows-container');
-        
-        if (initialExercises && initialExercises.length > 0) {
-          initialExercises.forEach(ex => {
-            exRows.appendChild(exerciseRowTemplateWod(blockId, ex.name, ex.note));
-          });
-        } else {
-          exRows.appendChild(exerciseRowTemplateWod(blockId));
-        }
+        initialMovements.forEach(ex => exRows.appendChild(exerciseRowTemplateWod(blockId, ex.name, ex.note)));
+        if(!initialMovements.length) exRows.appendChild(exerciseRowTemplateWod(blockId));
 
         div.querySelector('.add-ex-row-btn').addEventListener('click', () => { exRows.appendChild(exerciseRowTemplateWod(blockId)); });
-        div.querySelector('.remove-block-btn').addEventListener('click', () => { if(wodBlocksContainer.children.length > 1) div.remove(); });
+        div.querySelector('.remove-block-btn').addEventListener('click', () => { if($$('.wod-block').length > 1) div.remove(); });
         return div;
-      }
-
-      function resetWodForm() {
-        wodForm.reset();
-        $('#wodEditingId').value = '';
-        $('#wodDate').value = todayStr();
-        $('#wodFormTitle').innerHTML = '<span class="dot teal"></span>Inserisci Allenamento CrossFit';
-        $('#wodSubmitBtn').textContent = 'Salva Sessione CrossFit';
-        $('#wodCancelEditBtn').style.display = 'none';
-        wodBlocksContainer.innerHTML = '';
-        wodBlocksContainer.appendChild(wodBlockTemplate());
-      }
-
-      if($('#wodCancelEditBtn')) {
-        $('#wodCancelEditBtn').addEventListener('click', resetWodForm);
       }
 
       if($('#addWodBlockBtn')) {
         $('#addWodBlockBtn').addEventListener('click', () => { wodBlocksContainer.appendChild(wodBlockTemplate()); });
       }
 
+      function resetWodForm() {
+        wodForm.reset();
+        $('#wodEditingId').value = '';
+        $('#wodDate').value = todayStr();
+        $('#wodNotes').value = '';
+        $('#wodFormTitle').innerHTML = '<span class="dot teal"></span>Inserisci Allenamento CrossFit (Multi-WOD)';
+        $('#wodSubmitBtn').textContent = 'Salva Sessione CrossFit';
+        $('#wodCancelEditBtn').style.display = 'none';
+        wodBlocksContainer.innerHTML = '';
+        wodBlocksContainer.appendChild(wodBlockTemplate());
+      }
+      if($('#wodCancelEditBtn')) $('#wodCancelEditBtn').addEventListener('click', resetWodForm);
+
       if(wodForm) {
         wodForm.addEventListener('submit', async (e) => {
           e.preventDefault();
-          const wodsInSession = $$('.wod-block', wodBlocksContainer).map(block => {
-            const exercises = $$('.exercise-row', block).map(row => ({
+          
+          const multiWodsData = $$('.wod-block').map(block => {
+            const movements = $$('.exercise-row', block).map(row => ({
               name: row.querySelector('.ex-name').value.trim(),
               note: row.querySelector('.ex-note').value.trim()
-            })).filter(ex => ex.name);
+            })).filter(m => m.name);
+
             return {
               type: block.querySelector('.wod-type-select').value,
               description: block.querySelector('.wod-desc-textarea').value.trim(),
-              exercises: exercises
+              movements: movements
             };
           });
 
           const editingId = $('#wodEditingId').value;
           const isEditMode = editingId !== '';
 
-          const sessionEntry = { 
-            id: isEditMode ? editingId : uid(), 
-            date: $('#wodDate').value, 
-            notes: $('#wodNotes').value.trim(), 
-            wods: wodsInSession 
+          const payload = {
+            id: isEditMode ? editingId : uid(),
+            date: $('#wodDate').value,
+            notes: $('#wodNotes').value.trim(),
+            exercises: multiWodsData, // Qui dentro via l'intero array JSONB dei WOD
+            type: multiWodsData[0]?.type || 'fortime', 
+            description: multiWodsData[0]?.description || '',
+            result: null
           };
 
-          if(supabase) {
-            if(isEditMode) {
-              await supabase.from('wods').update(sessionEntry).eq('id', editingId);
-            } else {
-              await supabase.from('wods').insert([sessionEntry]);
+          try {
+            if(supabase) {
+              let error;
+              if(isEditMode) {
+                const res = await supabase.from('wods').update(payload).eq('id', editingId);
+                error = res.error;
+              } else {
+                const res = await supabase.from('wods').insert([payload]);
+                error = res.error;
+              }
+              if(error) throw error;
             }
-          }
 
-          if(isEditMode) {
-            state.wods = state.wods.map(w => w.id === editingId ? sessionEntry : w);
-          } else {
-            state.wods.push(sessionEntry);
+            if(isEditMode) {
+              state.wods = state.wods.map(w => w.id === editingId ? payload : w);
+            } else {
+              state.wods.push(payload);
+            }
+            resetWodForm();
+            renderWods();
+          } catch(err) {
+            alert("Errore durante il salvataggio CrossFit:\n" + err.message);
           }
-
-          resetWodForm();
-          renderWods();
         });
       }
 
       function renderWods(){
         const list = $('#wodList'); if(!list) return;
         const sorted = [...state.wods].sort((a,b) => b.date.localeCompare(a.date));
-        if(sorted.length === 0){
-          list.innerHTML = '<div class="empty-state">Nessun allenamento CrossFit inserito.</div>'; return;
-        }
+        if(!sorted.length){ list.innerHTML = '<div class="empty-state">Nessun allenamento presente.</div>'; return; }
+        
         list.innerHTML = sorted.map(session => {
-          const subWodsHtml = (session.wods || []).map(w => `
+          const blocks = Array.isArray(session.exercises) ? session.exercises : [{ type: session.type, description: session.description, movements: [] }];
+          
+          const blocksHtml = blocks.map(b => `
             <div class="single-wod-display">
-              <div><span class="badge ${w.type}">${w.type}</span></div>
-              ${w.description ? `<div class="wod-desc">${w.description}</div>` : ''}
-              ${w.exercises && w.exercises.length ? `
+              <div><span class="badge ${b.type}">${b.type}</span></div>
+              ${b.description ? `<div class="wod-desc">${b.description}</div>` : ''}
+              ${b.movements && b.movements.length ? `
                 <ul class="exercise-list">
-                  ${w.exercises.map(e => `<li><span class="ex-name">${e.name}</span> ${e.note ? `<span class="ex-note">(${e.note})</span>` : ''}</li>`).join('')}
+                  ${b.movements.map(m => `<li><strong>${m.name}</strong> ${m.note ? `<span>(${m.note})</span>` : ''}</li>`).join('')}
                 </ul>
               ` : ''}
             </div>
           `).join('');
+
           return `
             <div class="entry">
               <div class="entry-top">
                 <span class="entry-date" style="font-size:14px; font-weight:600; color:var(--teal);">${fmtDate(session.date)}</span>
-                <div style="white-space: nowrap;">
-                  <button class="icon-btn edit-btn" data-edit-session-id="${session.id}">✏️</button>
-                  <button class="icon-btn" data-delete-session="${session.id}">&times;</button>
+                <div>
+                  <button class="icon-btn edit-btn" data-edit-id="${session.id}">✏️</button>
+                  <button class="icon-btn" data-delete-id="${session.id}">&times;</button>
                 </div>
               </div>
-              <div style="margin-top:5px;">${subWodsHtml}</div>
-              ${session.notes ? `<div class="notes" style="border-top:1px dashed var(--line); padding-top:6px; margin-top:10px;"><strong>Note:</strong> ${session.notes}</div>` : ''}
+              <div>${blocksHtml}</div>
+              ${session.notes ? `<div style="margin-top:10px; font-size:12px; color:var(--chalk-dim); border-top:1px dashed var(--line); padding-top:4px;">Note: ${session.notes}</div>` : ''}
             </div>
           `;
         }).join('');
 
-        // Evento Modifica Sessione CrossFit
-        $$('[data-edit-session-id]', list).forEach(btn => {
+        $$('[data-edit-id]', list).forEach(btn => {
           btn.addEventListener('click', () => {
-            const session = state.wods.find(w => w.id === btn.dataset.editSessionId);
+            const session = state.wods.find(w => w.id === btn.dataset.editId);
             if(!session) return;
 
             $('#wodEditingId').value = session.id;
             $('#wodDate').value = session.date;
             $('#wodNotes').value = session.notes || '';
 
-            // Ricostruisci tutti i blocchi WOD in UI
             wodBlocksContainer.innerHTML = '';
-            if (session.wods && session.wods.length > 0) {
-              session.wods.forEach(w => {
-                wodBlocksContainer.appendChild(wodBlockTemplate(w.type, w.description || '', w.exercises || []));
-              });
-            } else {
-              wodBlocksContainer.appendChild(wodBlockTemplate());
-            }
+            const blocks = Array.isArray(session.exercises) ? session.exercises : [{ type: session.type, description: session.description, movements: [] }];
+            
+            blocks.forEach(b => {
+              wodBlocksContainer.appendChild(wodBlockTemplate(b.type, b.description, b.movements));
+            });
 
-            // Cambia Grafica Modulo in modalità Modifica
             $('#wodFormTitle').innerHTML = '<span class="dot teal"></span>Modifica Sessione CrossFit';
             $('#wodSubmitBtn').textContent = 'Aggiorna Sessione';
             $('#wodCancelEditBtn').style.display = 'inline-block';
-
-            // Scorrimento fluido all'inizio del form
             $('#wodFormTitle').scrollIntoView({ behavior: 'smooth' });
           });
         });
 
-        // Evento Elimina Sessione CrossFit
-        $$('[data-delete-session]', list).forEach(btn => {
+        $$('[data-delete-id]', list).forEach(btn => {
           btn.addEventListener('click', async () => {
-            const idToDel = btn.dataset.deleteSession;
-            if(idToDel === $('#wodEditingId').value) resetWodForm();
-            if(supabase) await supabase.from('wods').delete().eq('id', idToDel);
-            state.wods = state.wods.filter(w => w.id !== idToDel);
+            const id = btn.dataset.deleteId;
+            if(supabase) await supabase.from('wods').delete().eq('id', id);
+            state.wods = state.wods.filter(w => w.id !== id);
             renderWods();
           });
         });
@@ -912,9 +908,7 @@
         syncFormFieldsVisibility();
       }
 
-      if($('#pbCancelEditBtn')) {
-        $('#pbCancelEditBtn').addEventListener('click', resetPbForm);
-      }
+      if($('#pbCancelEditBtn')) $('#pbCancelEditBtn').addEventListener('click', resetPbForm);
 
       if(pbManualForm) {
         pbManualForm.addEventListener('submit', async (e) => {
@@ -942,12 +936,18 @@
 
           if(supabase) { 
             try { 
+              let error;
               if(isEditMode) {
-                await supabase.from('pbs').update(entry).eq('id', editingId);
+                const res = await supabase.from('pbs').update(entry).eq('id', editingId);
+                error = res.error;
               } else {
-                await supabase.from('pbs').insert([entry]); 
+                const res = await supabase.from('pbs').insert([entry]); 
+                error = res.error;
               }
-            } catch(err){ console.error(err); } 
+              if(error) throw error;
+            } catch(err){ 
+              alert("Errore salvataggio massimale:\n" + err.message);
+            } 
           }
           
           if(isEditMode) {
@@ -1006,7 +1006,6 @@
           </table>
         `;
 
-        // Eventi Modifica Massimali
         $$('[data-edit-pb-id]', container).forEach(btn => {
           btn.addEventListener('click', () => {
             const item = state.pbs.find(p => p.id === btn.dataset.editPbId);
@@ -1044,7 +1043,6 @@
           });
         });
 
-        // Eventi Elimina Massimali
         $$('[data-delete-pb-id]', container).forEach(btn => {
           btn.addEventListener('click', async () => {
             const idToDel = btn.dataset.deletePbId;
@@ -1109,7 +1107,10 @@
     
       /* ---------- INIT ---------- */
       async function init(){
-        if(wodBlocksContainer) wodBlocksContainer.appendChild(wodBlockTemplate());
+        if(wodBlocksContainer) {
+          wodBlocksContainer.innerHTML = '';
+          wodBlocksContainer.appendChild(wodBlockTemplate());
+        }
         renderRuns(); renderWods(); renderGlobalPrTable();
         await loadState(); 
         renderRuns(); renderWods(); renderGlobalPrTable(); renderRunStats();
