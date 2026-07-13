@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Registro Allenamenti</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght=500;600;700&family=Inter:wght=400;500;600&family=Space+Mono:wght=400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{
@@ -95,7 +95,6 @@
     margin-bottom: 20px;
     position: relative;
   }
-
   .board h2{
     font-family:'Oswald', sans-serif;
     font-size: 17px;
@@ -136,10 +135,6 @@
     font-family: 'Inter', sans-serif;
     font-size: 14px;
   }
-  input:focus, select:focus, textarea:focus{
-    outline: none;
-    border-color: var(--chalk-dim);
-  }
   textarea{ resize: vertical; min-height: 54px; }
   .mono-input{ font-family:'Space Mono', monospace; }
 
@@ -154,13 +149,9 @@
     cursor:pointer;
     color: #12140F;
     font-weight: 600;
-    transition: filter .15s ease, transform .1s ease;
   }
-  button.primary:hover{ filter: brightness(1.08); }
-  button.primary:active{ transform: scale(.98); }
   .btn-orange{ background: var(--orange); }
   .btn-teal{ background: var(--teal); }
-  .btn-yellow{ background: var(--yellow); }
 
   button.ghost{
     background: none;
@@ -170,10 +161,7 @@
     padding: 7px 12px;
     font-size: 12px;
     cursor:pointer;
-    font-family:'Inter', sans-serif;
   }
-  button.ghost:hover{ color: var(--chalk); border-color: var(--chalk-dim); }
-
   button.icon-btn{
     background:none;
     border:none;
@@ -181,9 +169,7 @@
     cursor:pointer;
     font-size: 16px;
     padding: 2px 6px;
-    line-height:1;
   }
-  button.icon-btn:hover{ opacity: .75; }
 
   /* Exercise rows */
   .exercise-row{
@@ -193,7 +179,6 @@
     margin-bottom: 8px;
     align-items:end;
   }
-  .exercise-row label{ margin-bottom:4px; }
   @media (max-width: 640px){
     .exercise-row{ grid-template-columns: 1fr 1fr; }
   }
@@ -217,7 +202,6 @@
     display:flex;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
   }
   .entry-date{
     font-family:'Space Mono', monospace;
@@ -237,9 +221,7 @@
     font-family:'Inter', sans-serif;
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: .5px;
     display:block;
-    margin-bottom: 2px;
   }
   .badge{
     font-family:'Oswald', sans-serif;
@@ -254,22 +236,11 @@
   .badge.amrap{ background: var(--teal-dim); color: var(--teal); }
   .badge.emom{ background: rgba(242,193,78,0.15); color: var(--yellow); }
 
-  .wod-desc{ margin: 8px 0; font-size: 14px; color: var(--chalk); }
+  .wod-desc{ margin: 8px 0; font-size: 14px; }
   .exercise-list{ list-style:none; padding:0; margin: 8px 0; display:flex; flex-direction:column; gap:5px; }
-  .exercise-list li{
-    font-size: 13px;
-    display:flex;
-    gap: 8px;
-    align-items:baseline;
-    flex-wrap: wrap;
-  }
-  .exercise-list li::before{
-    content:'●';
-    color: var(--teal);
-    font-size: 8px;
-  }
+  .exercise-list li{ font-size: 13px; display:flex; gap: 8px; }
   .ex-name{ font-weight: 600; }
-  .ex-weight{ font-family:'Space Mono', monospace; color: var(--yellow); }
+  .ex-weight{ color: var(--yellow); font-family:'Space Mono', monospace; }
 
   .led{
     display:inline-block;
@@ -280,7 +251,6 @@
     font-family:'Space Mono', monospace;
     font-size: 18px;
     color: var(--teal);
-    letter-spacing: 1px;
     text-shadow: 0 0 8px rgba(47,199,163,0.5);
     margin-top: 8px;
   }
@@ -288,35 +258,14 @@
   .empty-state{ text-align:center; padding: 30px 10px; color: var(--chalk-dim); font-size: 13px; }
 
   /* Stats Table */
-  .stat-cards{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px,1fr));
-    gap: 10px;
-    margin-bottom: 18px;
-  }
-  .stat-card{
-    background: var(--board-alt);
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    padding: 12px;
-    text-align:center;
-  }
-  .stat-card .big{
-    font-family:'Space Mono', monospace;
-    font-size: 21px;
-    color: var(--chalk);
-    display:block;
-  }
-  .stat-card .lbl{
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: .5px;
-    color: var(--chalk-dim);
-    margin-top: 3px;
-    display:block;
-  }
-  .chart-wrap{ overflow-x:auto; }
+  .stat-cards{ display:grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 10px; margin-bottom: 18px; }
+  .stat-card{ background: var(--board-alt); border: 1px solid var(--line); border-radius: 9px; padding: 12px; text-align:center; }
+  .stat-card .big{ font-family:'Space Mono', monospace; font-size: 21px; display:block; }
+  .stat-card .lbl{ font-size: 10px; text-transform: uppercase; color: var(--chalk-dim); margin-top: 3px; display:block; }
+  .row-inline{ display:flex; gap: 12px; align-items:flex-end; margin-bottom: 14px; }
+  .row-inline .field { flex: 1; }
 
+  /* Table Style for Movement PRs */
   .pr-table {
     width: 100%;
     border-collapse: collapse;
@@ -326,7 +275,7 @@
     padding: 10px 12px;
     text-align: left;
     border-bottom: 1px solid var(--line);
-    font-size: 13px;
+    font-size: 14px;
   }
   .pr-table th {
     font-family: 'Oswald', sans-serif;
@@ -347,27 +296,11 @@
   .pr-table td.date-cell {
     font-family: 'Space Mono', monospace;
     color: var(--chalk-dim);
-    font-size: 11px;
+    font-size: 12px;
   }
   .pr-table tr:hover {
     background: rgba(255,255,255,0.02);
   }
-
-  .source-badge {
-    font-size: 9px;
-    text-transform: uppercase;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-  }
-  .source-badge.manual { background: rgba(242,193,78,0.12); color: var(--yellow); }
-  .source-badge.wod { background: rgba(47,199,163,0.12); color: var(--teal); }
-
-  .row-inline{ display:flex; gap: 12px; align-items:flex-end; flex-wrap: wrap; margin-bottom: 14px; }
-  .row-inline .field{ flex: 1; min-width: 180px; }
-
-  ::-webkit-scrollbar{ height: 6px; width: 6px; }
-  ::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -395,12 +328,12 @@
               <input type="date" id="runDate" required>
             </div>
             <div>
-              <label for="runKm">Km</label>
+              <label for="runKm">Km effettuati</label>
               <input type="number" id="runKm" step="0.01" min="0" placeholder="10.5" required>
             </div>
             <div>
               <label for="runPace">Passo medio (min/km)</label>
-              <input type="text" id="runPace" class="mono-input" placeholder="5:30" pattern="^\d{1,2}:\d{2}$" title="Formato mm:ss, es. 5:30">
+              <input type="text" id="runPace" class="mono-input" placeholder="5:30" pattern="^\d{1,2}:\d{2}$" title="Formato mm:ss (es. 5:30)">
             </div>
             <div>
               <label for="runHr">Battiti medi (bpm)</label>
@@ -411,6 +344,12 @@
               <input type="number" id="runCal" min="0" placeholder="620">
             </div>
           </div>
+          
+          <div style="margin-bottom: 16px;">
+            <label>Tempo totale calcolato</label>
+            <div id="calculatedTimeLed" class="led" style="color: var(--orange); text-shadow: 0 0 8px rgba(255,122,69,0.5);">--:--</div>
+          </div>
+
           <button type="submit" class="primary btn-orange">Salva allenamento</button>
         </form>
       </div>
@@ -470,53 +409,15 @@
       </div>
 
       <div class="board">
-        <h2><span class="dot yellow"></span>Inserimento Manuale Massimali / RM</h2>
-        <form id="pbManualForm">
-          <div class="form-grid">
-            <div>
-              <label for="pbDate">Data</label>
-              <input type="date" id="pbDate" required>
-            </div>
-            <div>
-              <label for="pbName">Esercizio</label>
-              <input type="text" id="pbName" list="exerciseNames" placeholder="es. Back Squat" required>
-            </div>
-            <div>
-              <label for="pbWeight">Peso (kg)</label>
-              <input type="number" id="pbWeight" step="0.5" min="0" placeholder="100" required>
-            </div>
-            <div>
-              <label for="pbReps">Tipo RM (Reps)</label>
-              <select id="pbReps">
-                <option value="1">1-RM (Massimale)</option>
-                <option value="2">2-RM</option>
-                <option value="3">3-RM</option>
-                <option value="4">4-RM</option>
-                <option value="5">5-RM</option>
-                <option value="6">6-RM</option>
-                <option value="8">8-RM</option>
-                <option value="10">10-RM</option>
-              </select>
-            </div>
-          </div>
-          <div style="margin-bottom: 14px;">
-            <span style="font-size: 11px; color: var(--chalk-dim); text-transform: uppercase; display: block; margin-bottom: 4px;">Anteprima Stima 1-RM</span>
-            <div id="pbPreviewOneRM" style="font-family: 'Space Mono', monospace; color: var(--yellow); font-size: 15px; font-weight: bold;">-- kg</div>
-          </div>
-          <button type="submit" class="primary btn-yellow">Salva Record</button>
-        </form>
+        <h2><span class="dot yellow"></span>Movimento &mdash; Massimali & Stima 1-RM</h2>
+        <div id="movementList"></div>
       </div>
 
       <div class="board">
-        <h2><span class="dot yellow"></span>Tutti i Tuoi Massimali & Stime 1-RM</h2>
-        <div id="globalPrTableContainer"></div>
-      </div>
-
-      <div class="board">
-        <h2><span class="dot teal"></span>Crossfit &mdash; progressi sui pesi storici</h2>
+        <h2><span class="dot teal"></span>Crossfit &mdash; Analisi Singolo Peso</h2>
         <div class="row-inline">
           <div class="field">
-            <label for="exerciseSelect">Esercizio</label>
+            <label for="exerciseSelect">Scegli esercizio per grafico progressione</label>
             <select id="exerciseSelect"></select>
           </div>
         </div>
@@ -529,561 +430,461 @@
 <datalist id="exerciseNames"></datalist>
 
 <script>
-    (function(){
-      // --- CONFIGURAZIONE SUPABASE ---
-      // IMPORTANTE: Sostituisci questi valori solo se hai un DB Supabase attivo, altrimenti l'app funzionerà comunque in locale.
-      const SUPABASE_URL = "https://jyejxdxwrlifdgdoxnkx.supabase.co";
-      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZWp4ZHh3cmxpZmRnZG94bmt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzMwNjEsImV4cCI6MjA5OTUwOTA2MX0.OfR-joJS_eq0nJnarlR22yapu0foPRRTSp2mrnyzcl8";
-      
-      let supabase = null;
-      if(window.supabase && !SUPABASE_URL.includes("XYZ_IL_TUO_ID")) {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-      }
-    
-      let state = { runs: [], wods: [], pbs: [] };
-    
-      const $ = (sel, ctx) => (ctx||document).querySelector(sel);
-      const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
-    
-      function todayStr(){ return new Date().toISOString().slice(0,10); }
-      function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
-    
-      function fmtDate(iso){
-        if(!iso) return '&mdash;';
-        const d = new Date(iso + 'T00:00:00');
-        return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
-      }
+(function(){
+  // --- CONFIGURAZIONE SUPABASE ---
+  const SUPABASE_URL = "https://jyejxdxwrlifdgdoxnkx.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZWp4ZHh3cmxpZmRnZG94bmt4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM5MzMwNjEsImV4cCI6MjA5OTUwOTA2MX0.OfR-joJS_eq0nJnarlR22yapu0foPRRTSp2mrnyzcl8";
+  
+  let supabaseClient = null;
+  if (typeof supabase !== 'undefined' && !SUPABASE_URL.includes("XYZ_IL_TUO_ID")) {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  }
 
-      function calculateOneRM(weight, reps) {
-        if (!weight) return 0;
-        if (!reps || isNaN(reps) || reps <= 1) return weight;
-        return weight * (1 + (reps / 30));
-      }
+  let state = { runs: [], wods: [] };
 
-      function parseReps(repsStr) {
-        if (!repsStr) return 1;
-        const match = repsStr.trim().toLowerCase().match(/^([0-9]+)/);
-        if (match) return parseInt(match[1]) || 1;
-        return 1;
+  const $ = (sel, ctx) => (ctx||document).querySelector(sel);
+  const $$ = (sel, ctx) => Array.from((ctx||document).querySelectorAll(sel));
+
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function fmtDate(iso){
+    const d = new Date(iso + 'T00:00:00');
+    return d.toLocaleDateString('it-IT', { day:'2-digit', month:'short', year:'numeric' });
+  }
+
+  // Formula di Epley per calcolare l'1RM teorico: Peso * (1 + (Reps / 30))
+  function calculateOneRM(weight, reps) {
+    if (!weight) return 0;
+    if (!reps || isNaN(reps) || reps <= 1) return weight;
+    return weight * (1 + (reps / 30));
+  }
+
+  // Estrae in modo intelligente il numero di reps da una stringa (es: "21-15-9" -> prende l'ultimo o analizza se è un numero singolo "2", "3 reps" ecc)
+  function parseReps(repsStr) {
+    if (!repsStr) return 1;
+    const cleanStr = repsStr.trim().toLowerCase();
+    const match = cleanStr.match(/^([0-9]+)/); // Estrae il primo gruppo numerico consecutivo
+    if (match) {
+      return parseInt(match[1]) || 1;
+    }
+    return 1;
+  }
+
+  /* ---------- AZIONE TAB ---------- */
+  $$('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      $$('.tab').forEach(t => t.classList.remove('active'));
+      $$('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const targetPanel = $('#tab-' + tab.dataset.tab);
+      if(targetPanel) targetPanel.classList.add('active');
+      if(tab.dataset.tab === 'stats'){ renderStats(); }
+    });
+  });
+
+  async function loadState(){
+    if (!supabaseClient) {
+      console.warn("Utilizzo dati locali temporanei: configura URL e Chiave Anonima di Supabase nello script.");
+      return;
+    }
+    try{
+      const { data: runsData, error: runsError } = await supabaseClient.from('runs').select('*').order('date', { ascending: false });
+      const { data: wodsData, error: wodsError } = await supabaseClient.from('wods').select('*').order('date', { ascending: false });
+      if (runsError) throw runsError;
+      if (wodsError) throw wodsError;
+      state.runs = runsData || [];
+      state.wods = wodsData || [];
+    }catch(e){
+      console.error('Errore Supabase:', e);
+    }
+  }
+
+  /* ---------- LOGICA CORSA ---------- */
+  const runForm = $('#runForm');
+  if($('#runDate')) $('#runDate').value = todayStr();
+
+  function paceToSeconds(pace){
+    if(!pace) return null;
+    const m = pace.match(/^(\d{1,2}):(\d{2})$/);
+    if(!m) return null;
+    return parseInt(m[1]) * 60 + parseInt(m[2]);
+  }
+  
+  function secondsToFormattedTime(totalSec){
+    if (!totalSec || isNaN(totalSec)) return "--:--";
+    const hrs = Math.floor(totalSec / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = Math.round(totalSec % 60);
+    const minStr = mins.toString().padStart(2, '0');
+    const secStr = secs.toString().padStart(2, '0');
+    if (hrs > 0) return `${hrs}:${minStr}:${secStr}`;
+    return `${mins}:${secStr}`;
+  }
+
+  function updateCalculatedTime() {
+    const km = parseFloat($('#runKm')?.value);
+    const paceStr = $('#runPace')?.value.trim();
+    const led = $('#calculatedTimeLed');
+    if (!km || !paceStr) { if(led) led.textContent = "--:--"; return; }
+    const secPerKm = paceToSeconds(paceStr);
+    if (secPerKm) {
+      if(led) led.textContent = secondsToFormattedTime(secPerKm * km);
+    } else {
+      if(led) led.textContent = "--:--";
+    }
+  }
+
+  if($('#runKm')) $('#runKm').addEventListener('input', updateCalculatedTime);
+  if($('#runPace')) $('#runPace').addEventListener('input', updateCalculatedTime);
+
+  if(runForm) {
+    runForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const entry = {
+        id: uid(),
+        date: $('#runDate').value,
+        km: parseFloat($('#runKm').value),
+        pace: $('#runPace').value.trim(),
+        hr: $('#runHr').value ? parseInt($('#runHr').value) : null,
+        cal: $('#runCal').value ? parseInt($('#runCal').value) : null
+      };
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('runs').insert([entry]);
+          if (error) throw error;
+        } catch(err) { console.error(err); }
       }
-    
-      /* ---------- GESTIONE INTERATTIVITÀ DELLE TAB (CORRETTO) ---------- */
-      $$('.tab').forEach(tabButton => {
-        tabButton.addEventListener('click', () => {
-          $$('.tab').forEach(t => t.classList.remove('active'));
-          $$('.tab-panel').forEach(p => p.classList.remove('active'));
-          
-          tabButton.classList.add('active');
-          const targetPanelId = 'tab-' + tabButton.getAttribute('data-tab');
-          const panel = $('#' + targetPanelId);
-          if (panel) {
-            panel.classList.add('active');
-          }
-          
-          if(tabButton.getAttribute('data-tab') === 'stats'){ 
-            renderStats(); 
-          }
-        });
-      });
-    
-      async function loadState(){
-        try{
-          if(!supabase) return;
-          const { data: runsData } = await supabase.from('runs').select('*').order('date', { ascending: false });
-          const { data: wodsData } = await supabase.from('wods').select('*').order('date', { ascending: false });
-          
-          let pbsData = [];
-          try {
-            const { data } = await supabase.from('pbs').select('*').order('date', { ascending: false });
-            pbsData = data || [];
-          } catch(e) { console.warn("Uso array locale pbs."); }
-    
-          state.runs = runsData || [];
-          state.wods = wodsData || [];
-          state.pbs = pbsData || [];
-        }catch(e){
-          console.error('Errore caricamento dati:', e);
-        }
-      }
-    
-      /* ---------- LOGICA CORSA ---------- */
-      const runForm = $('#runForm');
+      state.runs.push(entry);
+      renderRuns();
+      runForm.reset();
       if($('#runDate')) $('#runDate').value = todayStr();
-    
-      if(runForm) {
-        runForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const entry = {
-            id: uid(),
-            date: $('#runDate').value,
-            km: parseFloat($('#runKm').value),
-            pace: $('#runPace').value.trim(),
-            hr: $('#runHr').value ? parseInt($('#runHr').value) : null,
-            cal: $('#runCal').value ? parseInt($('#runCal').value) : null
-          };
-      
-          if(supabase) await supabase.from('runs').insert([entry]);
-          state.runs.push(entry);
-          renderRuns();
-          runForm.reset();
-          $('#runDate').value = todayStr();
-        });
-      }
-    
-      function renderRuns(){
-        const list = $('#runList');
-        if(!list) return;
-        const sorted = [...state.runs].sort((a,b) => b.date.localeCompare(a.date));
-        if(sorted.length === 0){
-          list.innerHTML = '<div class="empty-state">Nessuna corsa registrata.</div>';
-          return;
-        }
-        list.innerHTML = sorted.map(r => `
-          <div class="entry">
-            <div class="entry-top">
-              <span class="entry-date">${fmtDate(r.date)}</span>
-              <button class="icon-btn" data-delete-run="${r.id}">&times;</button>
-            </div>
-            <div class="entry-stats">
-              <div><span class="stat-label">Km</span>${r.km ?? '&mdash;'}</div>
-              <div><span class="stat-label">Passo</span>${r.pace || '&mdash;'}</div>
-              <div><span class="stat-label">Battiti</span>${r.hr ?? '&mdash;'}</div>
-              <div><span class="stat-label">Calorie</span>${r.cal ?? '&mdash;'}</div>
-            </div>
+      if($('#calculatedTimeLed')) $('#calculatedTimeLed').textContent = "--:--";
+    });
+  }
+
+  function renderRuns(){
+    const list = $('#runList');
+    if(!list) return;
+    const sorted = [...state.runs].sort((a,b) => b.date.localeCompare(a.date));
+    if(sorted.length === 0){
+      list.innerHTML = '<div class="empty-state">Nessuna corsa registrata.</div>';
+      return;
+    }
+    list.innerHTML = sorted.map(r => {
+      const sec = paceToSeconds(r.pace);
+      return `
+        <div class="entry">
+          <div class="entry-top">
+            <span class="entry-date">${fmtDate(r.date)}</span>
+            <button class="icon-btn" data-delete-run="${r.id}">&times;</button>
           </div>
-        `).join('');
-    
-        $$('[data-delete-run]', list).forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const idToDelete = btn.dataset.deleteRun;
-            if(supabase) await supabase.from('runs').delete().eq('id', idToDelete);
-            state.runs = state.runs.filter(r => r.id !== idToDelete);
-            renderRuns();
-          });
-        });
+          <div class="entry-stats">
+            <div><span class="stat-label">Km</span>${r.km ?? '&mdash;'}</div>
+            <div><span class="stat-label">Passo</span>${r.pace || '&mdash;'}</div>
+            <div><span class="stat-label">Tempo Totale</span><span style="color:var(--orange)">${sec ? secondsToFormattedTime(sec * r.km) : '&mdash;'}</span></div>
+            <div><span class="stat-label">Battiti</span>${r.hr ?? '&mdash;'}</div>
+            <div><span class="stat-label">Calorie</span>${r.cal ?? '&mdash;'}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    $$('[data-delete-run]', list).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.deleteRun;
+        if (supabaseClient) await supabaseClient.from('runs').delete().eq('id', id);
+        state.runs = state.runs.filter(r => r.id !== id);
+        renderRuns();
+      });
+    });
+  }
+
+  /* ---------- LOGICA CROSSFIT ---------- */
+  const wodForm = $('#wodForm');
+  if($('#wodDate')) $('#wodDate').value = todayStr();
+  const exerciseRows = $('#exerciseRows');
+  const resultFields = $('#resultFields');
+  const wodTypeSelect = $('#wodType');
+
+  function exerciseRowTemplate(){
+    const div = document.createElement('div');
+    div.className = 'exercise-row';
+    div.innerHTML = `
+      <div><label>Esercizio (cerca/scrivi)</label><input type="text" class="ex-name-input" list="exerciseNames" placeholder="es. Squat"></div>
+      <div><label>Peso (kg)</label><input type="number" class="ex-weight-input" step="0.5" min="0" placeholder="50"></div>
+      <div><label>Reps (es: 2 o 5)</label><input type="text" class="ex-reps-input" placeholder="2"></div>
+      <div><label>Note</label><input type="text" class="ex-scaling-input" placeholder="Scalato"></div>
+      <button type="button" class="icon-btn" data-remove-row>&times;</button>
+    `;
+    div.querySelector('[data-remove-row]').addEventListener('click', () => {
+      if(exerciseRows.children.length > 1) div.remove();
+      else div.querySelectorAll('input').forEach(i => i.value = '');
+    });
+    return div;
+  }
+
+  if($('#addExerciseBtn')) {
+    $('#addExerciseBtn').addEventListener('click', () => { exerciseRows.appendChild(exerciseRowTemplate()); });
+  }
+
+  function renderResultFields(){
+    if(!resultFields || !wodTypeSelect) return;
+    const type = wodTypeSelect.value;
+    if(type === 'fortime'){
+      resultFields.innerHTML = `<label>Tempo (mm:ss)</label><input type="text" id="resTime" class="mono-input" placeholder="12:45">`;
+    } else if(type === 'amrap') {
+      resultFields.innerHTML = `
+        <div class="form-grid">
+          <div><label>Round</label><input type="number" id="resRounds" placeholder="7"></div>
+          <div><label>Reps Extra</label><input type="number" id="resExtraReps" placeholder="5"></div>
+        </div>`;
+    } else if(type === 'emom') {
+      resultFields.innerHTML = `
+        <div class="form-grid">
+          <div><label>Durata Totale (min)</label><input type="number" id="resDuration" placeholder="20"></div>
+          <div><label>Ogni quanti minuti (es. 1 o 2)</label><input type="number" id="resEmomInterval" step="1" min="1" value="1"></div>
+          <div><label>Round Completati</label><input type="number" id="resEmomRounds" placeholder="20"></div>
+        </div>`;
+    }
+  }
+  if(wodTypeSelect) wodTypeSelect.addEventListener('change', renderResultFields);
+
+  if(wodForm) {
+    wodForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const exercises = $$('.exercise-row', exerciseRows).map(row => ({
+        name: row.querySelector('.ex-name-input').value.trim(),
+        weight: row.querySelector('.ex-weight-input').value ? parseFloat(row.querySelector('.ex-weight-input').value) : null,
+        reps: row.querySelector('.ex-reps-input').value.trim(),
+        scaling: row.querySelector('.ex-scaling-input').value.trim()
+      })).filter(ex => ex.name);
+
+      let result = { type: wodTypeSelect.value };
+      if(wodTypeSelect.value === 'fortime') {
+        result.time = $('#resTime') ? $('#resTime').value.trim() : '';
+      } else if(wodTypeSelect.value === 'amrap') {
+        result.rounds = $('#resRounds')?.value ? parseInt($('#resRounds').value) : 0;
+        result.extraReps = $('#resExtraReps')?.value ? parseInt($('#resExtraReps').value) : 0;
+      } else if(wodTypeSelect.value === 'emom') {
+        result.duration = $('#resDuration')?.value ? parseInt($('#resDuration').value) : 0;
+        result.interval = $('#resEmomInterval')?.value ? parseInt($('#resEmomInterval').value) : 1;
+        result.roundsCompleted = $('#resEmomRounds')?.value ? parseInt($('#resEmomRounds').value) : 0;
       }
-    
-      /* ---------- LOGICA CROSSFIT ---------- */
-      const wodForm = $('#wodForm');
+
+      const entry = {
+        id: uid(),
+        date: $('#wodDate').value,
+        type: wodTypeSelect.value,
+        description: $('#wodDesc').value.trim(),
+        exercises,
+        result,
+        notes: $('#wodNotes').value.trim()
+      };
+
+      if (supabaseClient) {
+        try {
+          const { error } = await supabaseClient.from('wods').insert([entry]);
+          if (error) throw error;
+        } catch(err) { console.error(err); }
+      }
+      state.wods.push(entry);
+      renderWods();
+      updateExerciseDatalist();
+      wodForm.reset();
       if($('#wodDate')) $('#wodDate').value = todayStr();
-      const exerciseRows = $('#exerciseRows');
-      const resultFields = $('#resultFields');
-      const wodTypeSelect = $('#wodType');
-    
-      function exerciseRowTemplate(){
-        const div = document.createElement('div');
-        div.className = 'exercise-row';
-        div.innerHTML = `
-          <div><label>Esercizio</label><input type="text" class="ex-name-input" list="exerciseNames" placeholder="es. Clean"></div>
-          <div><label>Peso (kg)</label><input type="number" class="ex-weight-input" step="0.5" min="0" placeholder="50"></div>
-          <div><label>Reps</label><input type="text" class="ex-reps-input" placeholder="2"></div>
-          <div><label>Note</label><input type="text" class="ex-scaling-input" placeholder="Note"></div>
-          <button type="button" class="icon-btn" data-remove-row>&times;</button>
-        `;
-        div.querySelector('[data-remove-row]').addEventListener('click', () => {
-          if(exerciseRows.children.length > 1) div.remove();
-          else div.querySelectorAll('input').forEach(i => i.value = '');
-        });
-        return div;
-      }
-    
-      if($('#addExerciseBtn')) {
-        $('#addExerciseBtn').addEventListener('click', () => { exerciseRows.appendChild(exerciseRowTemplate()); });
-      }
-    
-      function renderResultFields(){
-        if(!resultFields || !wodTypeSelect) return;
-        const type = wodTypeSelect.value;
-        if(type === 'fortime'){
-          resultFields.innerHTML = `<label for="resTime">Tempo (mm:ss)</label><input type="text" id="resTime" class="mono-input" placeholder="12:45">`;
-        } else if(type === 'amrap'){
-          resultFields.innerHTML = `
-            <div class="form-grid">
-              <div><label for="resRounds">Rounds</label><input type="number" id="resRounds" min="0" placeholder="7"></div>
-              <div><label for="resExtraReps">Reps extra</label><input type="number" id="resExtraReps" min="0" placeholder="5"></div>
-            </div>`;
-        } else if(type === 'emom'){
-          resultFields.innerHTML = `
-            <div class="form-grid">
-              <div><label for="resDuration">Durata (min)</label><input type="number" id="resDuration" min="0" placeholder="20"></div>
-              <div><label for="resEmomRounds">Rounds completati</label><input type="number" id="resEmomRounds" min="0" placeholder="20"></div>
-            </div>`;
-        }
-      }
-      if(wodTypeSelect) wodTypeSelect.addEventListener('change', renderResultFields);
-    
-      function collectResult(){
-        const type = wodTypeSelect.value;
-        if(type === 'fortime') return { type, time: $('#resTime') ? $('#resTime').value.trim() : '' };
-        if(type === 'amrap') return { type, rounds: $('#resRounds').value ? parseInt($('#resRounds').value) : null, extraReps: $('#resExtraReps').value ? parseInt($('#resExtraReps').value) : null };
-        if(type === 'emom') return { type, duration: $('#resDuration').value ? parseInt($('#resDuration').value) : null, roundsCompleted: $('#resEmomRounds').value ? parseInt($('#resEmomRounds').value) : null };
-      }
-    
-      if(wodForm) {
-        wodForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const exercises = $$('.exercise-row', exerciseRows).map(row => ({
-            name: row.querySelector('.ex-name-input').value.trim(),
-            weight: row.querySelector('.ex-weight-input').value ? parseFloat(row.querySelector('.ex-weight-input').value) : null,
-            reps: row.querySelector('.ex-reps-input').value.trim(),
-            scaling: row.querySelector('.ex-scaling-input').value.trim()
-          })).filter(ex => ex.name);
-      
-          const entry = {
-            id: uid(),
-            date: $('#wodDate').value,
-            type: wodTypeSelect.value,
-            description: $('#wodDesc').value.trim(),
-            exercises,
-            result: collectResult(),
-            notes: $('#wodNotes').value.trim()
-          };
-      
-          if(supabase) await supabase.from('wods').insert([entry]);
-          state.wods.push(entry);
-          renderWods();
-          updateExerciseDatalist();
-          wodForm.reset();
-          $('#wodDate').value = todayStr();
-          exerciseRows.innerHTML = '';
-          exerciseRows.appendChild(exerciseRowTemplate());
-          renderResultFields();
-        });
-      }
-    
-      function renderWods(){
-        const list = $('#wodList');
-        if(!list) return;
-        const sorted = [...state.wods].sort((a,b) => b.date.localeCompare(a.date));
-        if(sorted.length === 0){
-          list.innerHTML = '<div class="empty-state">Nessun WOD registrato.</div>';
-          return;
-        }
-        list.innerHTML = sorted.map(w => {
-          let score = '&mdash;';
-          if(w.result?.type === 'fortime') score = w.result.time || '--:--';
-          else if(w.result?.type === 'amrap') score = `${w.result.rounds||0} Rds + ${w.result.extraReps||0} Reps`;
-          else if(w.result?.type === 'emom') score = `${w.result.roundsCompleted||0}/${w.result.duration||0} Rds`;
+      if(exerciseRows) { exerciseRows.innerHTML = ''; exerciseRows.appendChild(exerciseRowTemplate()); }
+      renderResultFields();
+    });
+  }
 
-          return `
-            <div class="entry">
-              <div class="entry-top">
-                <span class="entry-date">${fmtDate(w.date)} <span class="badge ${w.type}">${w.type}</span></span>
-                <button class="icon-btn" data-delete-wod="${w.id}">&times;</button>
-              </div>
-              ${w.description ? `<div class="wod-desc">${w.description}</div>` : ''}
-              ${w.exercises && w.exercises.length ? `
-                <ul class="exercise-list">
-                  ${w.exercises.map(ex => {
-                    const rCount = parseReps(ex.reps);
-                    const stima = (ex.weight && rCount > 1) ? ` <span style="color:var(--chalk-dim); font-size:11px;">(1-RM stim: ${calculateOneRM(ex.weight, rCount).toFixed(1)} kg)</span>` : '';
-                    return `<li><span class="ex-name">${ex.name}</span> ${ex.weight ? `<span class="ex-weight">${ex.weight} kg</span>` : ''} ${ex.reps ? `<span>(${ex.reps} Reps)</span>` : ''} ${stima}</li>`;
-                  }).join('')}
-                </ul>
-              ` : ''}
-              <div class="led">${score}</div>
-              ${w.notes ? `<div class="notes">${w.notes}</div>` : ''}
-            </div>
-          `;
-        }).join('');
-    
-        $$('[data-delete-wod]', list).forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const idToDelete = btn.dataset.deleteWod;
-            if(supabase) await supabase.from('wods').delete().eq('id', idToDelete);
-            state.wods = state.wods.filter(w => w.id !== idToDelete);
-            renderWods();
-            updateExerciseDatalist();
-          });
-        });
-      }
-    
-      /* ---------- RECORD MANUALI ---------- */
-      const pbManualForm = $('#pbManualForm');
-      if($('#pbDate')) $('#pbDate').value = todayStr();
-
-      function updateManualPbPreview() {
-        const weight = parseFloat($('#pbWeight').value) || 0;
-        const reps = parseInt($('#pbReps').value) || 1;
-        const preview = $('#pbPreviewOneRM');
-        if(preview) {
-          const estimated = calculateOneRM(weight, reps);
-          preview.textContent = estimated > 0 ? `${estimated.toFixed(1)} kg` : '-- kg';
-        }
+  function renderWods(){
+    const list = $('#wodList');
+    if(!list) return;
+    if(state.wods.length === 0){
+      list.innerHTML = '<div class="empty-state">Nessun WOD registrato.</div>';
+      return;
+    }
+    list.innerHTML = [...state.wods].sort((a,b) => b.date.localeCompare(a.date)).map(w => {
+      let resultText = '';
+      if(w.result?.type === 'fortime') resultText = w.result.time || '--:--';
+      else if(w.result?.type === 'amrap') resultText = `${w.result.rounds || 0} Rds + ${w.result.extraReps || 0} Reps`;
+      else if(w.result?.type === 'emom') {
+        const intervalText = w.result.interval && w.result.interval > 1 ? `E${w.result.interval}MOM` : 'EMOM';
+        resultText = `${intervalText} (${w.result.duration || 0} min): ${w.result.roundsCompleted || 0}/${w.result.duration || 0} Rds`;
       }
 
-      if($('#pbWeight')) $('#pbWeight').addEventListener('input', updateManualPbPreview);
-      if($('#pbReps')) $('#pbReps').addEventListener('change', updateManualPbPreview);
-
-      if(pbManualForm) {
-        pbManualForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const entry = {
-            id: uid(),
-            date: $('#pbDate').value,
-            name: $('#pbName').value.trim(),
-            weight: parseFloat($('#pbWeight').value),
-            reps: parseInt($('#pbReps').value)
-          };
-
-          if(supabase) {
-            try { await supabase.from('pbs').insert([entry]); } catch(err){}
-          }
-          state.pbs.push(entry);
-          pbManualForm.reset();
-          $('#pbDate').value = todayStr();
-          if($('#pbPreviewOneRM')) $('#pbPreviewOneRM').textContent = '-- kg';
-          updateExerciseDatalist();
-          renderStats();
-        });
-      }
-    
-      function updateExerciseDatalist(){
-        const names = new Set();
-        state.wods.forEach(w => (w.exercises||[]).forEach(ex => { if(ex.name) names.add(ex.name.trim()); }));
-        state.pbs.forEach(p => { if(p.name) names.add(p.name.trim()); });
-        
-        const datalist = $('#exerciseNames');
-        if(datalist) datalist.innerHTML = Array.from(names).sort().map(n => `<option value="${n}">`).join('');
-    
-        const select = $('#exerciseSelect');
-        if(select) {
-          const current = select.value;
-          select.innerHTML = Array.from(names).sort().map(n => `<option value="${n}">${n}</option>`).join('');
-          if(names.has(current)) select.value = current;
-          else if(!current && names.size > 0) select.value = Array.from(names).sort()[0];
-        }
-      }
-    
-      if($('#exerciseSelect')) $('#exerciseSelect').addEventListener('change', renderWodStats);
-    
-      /* ---------- STATISTICHE & GRAFICI ---------- */
-      function buildLineChart(points, opts){
-        opts = opts || {};
-        const width = opts.width || 640; const height = opts.height || 180;
-        const color = opts.color || '#2FC7A3'; const higherIsBetter = !!opts.higherIsBetter;
-        const valueFormatter = opts.valueFormatter || (v => v);
-        const padding = 34; const plotW = width - padding * 2; const plotH = height - padding * 2;
-    
-        if(points.length === 0) return '<div class="empty-state">Nessun dato.</div>';
-        const ys = points.map(p => p.y);
-        let yMin = Math.min(...ys); let yMax = Math.max(...ys);
-        if(yMin === yMax){ yMin -= 1; yMax += 1; }
-        const xStep = points.length > 1 ? plotW / (points.length - 1) : 0;
-    
-        function yPixel(v){
-          const norm = (v - yMin) / (yMax - yMin);
-          return higherIsBetter ? (padding + plotH - norm * plotH) : (padding + norm * plotH);
-        }
-        const coords = points.map((p, i) => [padding + i * xStep, yPixel(p.y)]);
-        const pathD = coords.map((c, i) => (i === 0 ? 'M' : 'L') + c[0].toFixed(1) + ',' + c[1].toFixed(1)).join(' ');
-        const bestIdx = higherIsBetter ? ys.indexOf(Math.max(...ys)) : ys.indexOf(Math.min(...ys));
-    
-        const dots = coords.map((c, i) => `
-          <circle cx="${c[0].toFixed(1)}" cy="${c[1].toFixed(1)}" r="${i === bestIdx ? 5 : 3.5}" fill="${i === bestIdx ? '#F2C14E' : color}">
-            <title>${fmtDate(points[i].x)}: ${valueFormatter(points[i].y)}</title>
-          </circle>`).join('');
-    
-        return `
-          <svg viewBox="0 0 ${width} ${height}" width="100%" height="${height}" style="overflow:visible;">
-            <line x1="${padding}" y1="${padding}" x2="${padding}" y2="${padding+plotH}" stroke="var(--line)" stroke-width="1"/>
-            <line x1="${padding}" y1="${padding+plotH}" x2="${padding+plotW}" y2="${padding+plotH}" stroke="var(--line)" stroke-width="1"/>
-            <text x="${padding-6}" y="${padding+4}" font-size="10" fill="var(--chalk-dim)" text-anchor="end" font-family="Space Mono, monospace">${valueFormatter(yMax)}</text>
-            <text x="${padding-6}" y="${padding+plotH+4}" font-size="10" fill="var(--chalk-dim)" text-anchor="end" font-family="Space Mono, monospace">${valueFormatter(yMin)}</text>
-            <path d="${pathD}" fill="none" stroke="${color}" stroke-width="2"/>
-            ${dots}
-          </svg>
-        `;
-      }
-    
-      function renderRunStats(){
-        const container = $('#runStats');
-        if(!container) return;
-        if(state.runs.length === 0){
-          container.innerHTML = '<div class="empty-state">Aggiungi corse per generare statistiche.</div>';
-          return;
-        }
-        const totalKm = state.runs.reduce((sum, r) => sum + (r.km || 0), 0);
-        container.innerHTML = `
-          <div class="stat-cards">
-            <div class="stat-card"><span class="big">${totalKm.toFixed(1)}</span><span class="lbl">Km totali</span></div>
-            <div class="stat-card"><span class="big">${state.runs.length}</span><span class="lbl">Allenamenti</span></div>
-          </div>`;
-      }
-
-      function renderGlobalPrTable() {
-        const container = $('#globalPrTableContainer');
-        if(!container) return;
-
-        const combinedMap = new Map();
-
-        state.wods.forEach(w => {
-          (w.exercises || []).forEach(ex => {
-            if(ex.name && ex.weight) {
-              const key = ex.name.trim().toLowerCase();
-              const rCount = parseReps(ex.reps);
-              const computedOneRM = calculateOneRM(ex.weight, rCount);
-
-              const existing = combinedMap.get(key);
-              if(!existing || computedOneRM > existing.oneRM) {
-                combinedMap.set(key, {
-                  id: w.id,
-                  name: ex.name.trim(),
-                  maxWeight: ex.weight,
-                  reps: rCount,
-                  oneRM: computedOneRM,
-                  date: w.date,
-                  source: 'wod'
-                });
-              }
-            }
-          });
-        });
-
-        state.pbs.forEach(p => {
-          if(p.name && p.weight) {
-            const key = p.name.trim().toLowerCase();
-            const computedOneRM = calculateOneRM(p.weight, p.reps);
-
-            const existing = combinedMap.get(key);
-            if(!existing || computedOneRM > existing.oneRM) {
-              combinedMap.set(key, {
-                id: p.id,
-                name: p.name.trim(),
-                maxWeight: p.weight,
-                reps: p.reps,
-                oneRM: computedOneRM,
-                date: p.date,
-                source: 'manual'
-              });
-            }
-          }
-        });
-
-        const sortedPrs = Array.from(combinedMap.values()).sort((a,b) => a.name.localeCompare(b.name));
-
-        if(sortedPrs.length === 0) {
-          container.innerHTML = '<div class="empty-state">Nessun massimale salvato.</div>';
-          return;
-        }
-
-        container.innerHTML = `
-          <table class="pr-table">
-            <thead>
-              <tr>
-                <th>Esercizio</th>
-                <th>Peso Reale</th>
-                <th>Stima 1-RM</th>
-                <th>Data</th>
-                <th>Fonte</th>
-                <th>Elimina</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${sortedPrs.map(item => `
-                <tr>
-                  <td><strong>${item.name}</strong></td>
-                  <td class="weight-cell">${item.maxWeight} kg <span style="font-size:11px; color:var(--chalk-dim)">@ ${item.reps}RM</span></td>
-                  <td class="rm-cell">${item.oneRM.toFixed(1)} kg</td>
-                  <td class="date-cell">${fmtDate(item.date)}</td>
-                  <td><span class="source-badge ${item.source}">${item.source === 'manual' ? 'Manuale' : 'WOD'}</span></td>
-                  <td>
-                    ${item.source === 'manual' ? `<button class="icon-btn" data-delete-pb-id="${item.id}">&times;</button>` : '&mdash;'}
-                  </td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
-        `;
-
-        $$('[data-delete-pb-id]', container).forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const idToDel = btn.dataset.deletePbId;
-            if(supabase) {
-              try { await supabase.from('pbs').delete().eq('id', idToDel); } catch(e){}
-            }
-            state.pbs = state.pbs.filter(p => p.id !== idToDel);
-            renderStats();
-            updateExerciseDatalist();
-          });
-        });
-      }
-    
-      function renderWodStats(){
-        const container = $('#wodStats');
-        if(!container) return;
-        const select = $('#exerciseSelect');
-        const exerciseName = select ? select.value : '';
-    
-        if(!exerciseName){
-          container.innerHTML = '<div class="empty-state">Seleziona un esercizio.</div>';
-          return;
-        }
-    
-        const points = [];
-        state.wods.forEach(w => {
-          (w.exercises || []).forEach(ex => {
-            if(ex.name && ex.name.trim().toLowerCase() === exerciseName.trim().toLowerCase() && ex.weight){
-              const rCount = parseReps(ex.reps);
-              points.push({ x: w.date, y: calculateOneRM(ex.weight, rCount) });
-            }
-          });
-        });
-        state.pbs.forEach(p => {
-          if(p.name && p.name.trim().toLowerCase() === exerciseName.trim().toLowerCase() && p.weight) {
-            points.push({ x: p.date, y: calculateOneRM(p.weight, p.reps) });
-          }
-        });
-
-        points.sort((a,b) => a.x.localeCompare(b.x));
-    
-        if(points.length === 0){
-          container.innerHTML = '<div class="empty-state">Nessun peso registrato.</div>';
-          return;
-        }
-    
-        const maxWeight = Math.max(...points.map(p => p.y));
-    
-        let html = `
-          <div class="stat-cards">
-            <div class="stat-card"><span class="big">${maxWeight.toFixed(1)} kg</span><span class="lbl">Miglior 1-RM</span></div>
-            <div class="stat-card"><span class="big">${points.length}</span><span class="lbl">Sessioni</span></div>
+      return `
+        <div class="entry">
+          <div class="entry-top">
+            <span class="entry-date">${fmtDate(w.date)} <span class="badge ${w.type}">${w.type}</span></span>
+            <button class="icon-btn" data-delete-wod="${w.id}">&times;</button>
           </div>
-        `;
-    
-        if(points.length >= 2){
-          html += `
-            <div class="chart-wrap">
-              ${buildLineChart(points, { color: '#2FC7A3', higherIsBetter: true, valueFormatter: v => v.toFixed(1) + ' kg' })}
-            </div>
-          `;
+          ${w.description ? `<div class="wod-desc">${w.description}</div>` : ''}
+          <ul class="exercise-list">
+            ${(w.exercises || []).map(ex => {
+              const rCount = parseReps(ex.reps);
+              const oneRMText = (ex.weight && rCount > 1) ? ` <span style="color:var(--chalk-dim); font-size:11px;">(1-RM stimato: ${calculateOneRM(ex.weight, rCount).toFixed(1)} kg)</span>` : '';
+              return `<li><span class="ex-name">${ex.name}</span> ${ex.weight ? `<span class="ex-weight">${ex.weight} kg</span>` : ''} ${ex.reps ? `(${ex.reps} reps)` : ''}${oneRMText}</li>`
+            }).join('')}
+          </ul>
+          <div class="led">${resultText}</div>
+          ${w.notes ? `<div class="notes">${w.notes}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    $$('[data-delete-wod]', list).forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const id = btn.dataset.deleteWod;
+        if (supabaseClient) await supabaseClient.from('wods').delete().eq('id', id);
+        state.wods = state.wods.filter(w => w.id !== id);
+        renderWods();
+        updateExerciseDatalist();
+      });
+    });
+  }
+
+  function updateExerciseDatalist(){
+    const select = $('#exerciseSelect');
+    const datalist = $('#exerciseNames');
+    const names = new Set();
+    state.wods.forEach(w => (w.exercises||[]).forEach(ex => { if(ex.name) names.add(ex.name.trim()); }));
+    const sortedNames = Array.from(names).sort();
+    if(datalist) datalist.innerHTML = sortedNames.map(n => `<option value="${n}">`).join('');
+    if(select) {
+      const currentSelection = select.value;
+      select.innerHTML = sortedNames.map(n => `<option value="${n}">${n}</option>`).join('');
+      if(names.has(currentSelection)) select.value = currentSelection;
+    }
+  }
+
+  if($('#exerciseSelect')) $('#exerciseSelect').addEventListener('change', renderWodStats);
+
+  /* ---------- RENDERING STATISTICHE ---------- */
+  function renderRunStats(){
+    const container = $('#runStats');
+    if(!container) return;
+    const totalKm = state.runs.reduce((sum, r) => sum + (r.km || 0), 0);
+    container.innerHTML = `
+      <div class="stat-cards">
+        <div class="stat-card"><span class="big">${totalKm.toFixed(1)}</span><span class="lbl">Km Totali</span></div>
+        <div class="stat-card"><span class="big">${state.runs.length}</span><span class="lbl">Sessioni</span></div>
+      </div>`;
+  }
+
+  // Creazione della Tabella dei PR Reali e degli 1-RM Stimati Teorici
+  function renderMovementList(){
+    const container = $('#movementList');
+    if(!container) return;
+
+    const prMap = new Map(); // key -> { name, maxWeight, reps, maxOneRM, date }
+
+    state.wods.forEach(w => {
+      (w.exercises || []).forEach(ex => {
+        if(ex.name && ex.weight !== null && ex.weight !== undefined) {
+          const key = ex.name.trim().toLowerCase();
+          const rCount = parseReps(ex.reps);
+          const computedOneRM = calculateOneRM(ex.weight, rCount);
+
+          const current = prMap.get(key);
+          // Aggiorna se l'1RM stimato totale o il peso specifico è superiore a quanto salvato
+          if(!current || computedOneRM > current.maxOneRM) {
+            prMap.set(key, {
+              name: ex.name.trim(),
+              maxWeight: ex.weight,
+              reps: ex.reps || "1",
+              maxOneRM: computedOneRM,
+              date: w.date
+            });
+          }
         }
-        container.innerHTML = html;
-      }
-    
-      function renderStats(){
-        renderRunStats();
-        renderGlobalPrTable();
-        renderWodStats();
-      }
-    
-      /* ---------- INIT ---------- */
-      async function init(){
-        if(exerciseRows) exerciseRows.appendChild(exerciseRowTemplate());
-        renderResultFields();
-        renderRuns();
-        renderWods();
-        updateExerciseDatalist();
-    
-        await loadState(); 
-        
-        renderRuns();
-        renderWods();
-        updateExerciseDatalist();
-        renderStats();
-      }
-      init();
-    })();
-    </script>
+      });
+    });
+
+    const prList = Array.from(prMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+
+    if(prList.length === 0) {
+      container.innerHTML = '<div class="empty-state">Nessun massimale registrato negli esercizi dei WOD.</div>';
+      return;
+    }
+
+    container.innerHTML = `
+      <table class="pr-table">
+        <thead>
+          <tr>
+            <th>Esercizio</th>
+            <th>Miglior RM Reale</th>
+            <th>Stima Massimale (1-RM)</th>
+            <th>Data Record</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${prList.map(item => `
+            <tr>
+              <td><strong>${item.name}</strong></td>
+              <td class="weight-cell">${item.maxWeight} kg <span style="font-size:12px; color:var(--chalk-dim)">@ ${item.reps} RM</span></td>
+              <td class="rm-cell">${item.maxOneRM.toFixed(1)} kg</td>
+              <td class="date-cell">${fmtDate(item.date)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function renderWodStats(){
+    const container = $('#wodStats');
+    if(!container) return;
+    const select = $('#exerciseSelect');
+    const exerciseName = select ? select.value : '';
+
+    if(!exerciseName){
+      container.innerHTML = `<div class="empty-state">Seleziona o digita un esercizio per analizzare la progressione dei massimali.</div>`;
+      return;
+    }
+
+    const points = [];
+    state.wods.forEach(w => {
+      (w.exercises || []).forEach(ex => {
+        if(ex.name && ex.name.trim().toLowerCase() === exerciseName.trim().toLowerCase() && ex.weight){
+          const rCount = parseReps(ex.reps);
+          points.push({ x: w.date, y: calculateOneRM(ex.weight, rCount), realW: ex.weight, realR: ex.reps || "1" });
+        }
+      });
+    });
+    points.sort((a,b) => a.x.localeCompare(b.x));
+
+    if(points.length === 0){
+      container.innerHTML = '<div class="empty-state">Nessun peso registrato nei WOD storici per questo specifico esercizio.</div>';
+      return;
+    }
+
+    const maxOneRM = Math.max(...points.map(p => p.y));
+    container.innerHTML = `
+      <div class="stat-cards" style="margin-top: 10px;">
+        <div class="stat-card"><span class="big">${maxOneRM.toFixed(1)} kg</span><span class="lbl">Miglior 1-RM Stimato</span></div>
+        <div class="stat-card"><span class="big">${points.length}</span><span class="lbl">Sessioni totali</span></div>
+      </div>`;
+  }
+
+  function renderStats(){ 
+    renderRunStats(); 
+    renderMovementList(); 
+    renderWodStats(); 
+  }
+
+  /* ---------- INIZIALIZZAZIONE ---------- */
+  async function init(){
+    if(exerciseRows) exerciseRows.appendChild(exerciseRowTemplate());
+    renderResultFields();
+    await loadState();
+    renderRuns();
+    renderWods();
+    updateExerciseDatalist();
+  }
+  init();
+})();
+</script>
 </body>
 </html>
